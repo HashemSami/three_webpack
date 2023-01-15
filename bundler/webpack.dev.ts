@@ -3,6 +3,7 @@ import { Configuration } from "webpack";
 import { merge } from "webpack-merge";
 import { common } from "./webpack.common";
 // import portFinderSync from "portfinder-sync";
+const portFinderSync = require("portfinder-sync");
 import r from "webpack-dev-server";
 
 const infoColor = (_message: string) => {
@@ -18,7 +19,7 @@ const devConfig: Configuration = {
   },
   devServer: {
     host: "local-ip",
-    port: 8080,
+    port: portFinderSync.getPort(8080),
     open: true,
     https: false,
     allowedHosts: "all",
