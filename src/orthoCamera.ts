@@ -5,8 +5,8 @@ import * as THREE from "three";
  * Sizes
  */
 const sizes = {
-  width: 900,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
 
 const addMouseControls = () => {

@@ -14,7 +14,7 @@ const timeDelta = () => {
   };
 };
 
-const renderOrbitControls = () => {
+const fullScreenCanvas = () => {
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
@@ -24,8 +24,11 @@ const renderOrbitControls = () => {
   /**
    * Objects
    */
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true,
+  });
   const mesh = new THREE.Mesh(geometry, material);
   // mesh.position.set(1, 1, 1);
   mesh.scale.set(2, 0.5, 0.5);
@@ -39,9 +42,36 @@ const renderOrbitControls = () => {
    * Sizes
    */
   const sizes = {
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
   };
+
+  window.addEventListener("resize", () => {
+    // update sizes
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+
+    // update camera
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+
+    // update renderer
+    renderer.setSize(sizes.width, sizes.height);
+    // if the window changed to another screen
+    // we will still have the same ratio
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  });
+
+  // set full size screen with double click
+  window.addEventListener("dblclick", () => {
+    if (!document.fullscreenElement) {
+      console.log("go fullscreen");
+      canvas.requestFullscreen();
+    } else {
+      console.log("exit fullscreen");
+      document.exitFullscreen();
+    }
+  });
 
   /**
    * Camera
@@ -53,6 +83,7 @@ const renderOrbitControls = () => {
   scene.add(camera);
 
   const controls = new OrbitControls(camera, canvas);
+  // controls.enabled = false;
   controls.enableDamping = true;
 
   // distance method the length between the object and the camera
@@ -69,6 +100,10 @@ const renderOrbitControls = () => {
     canvas: canvas,
   });
   renderer.setSize(sizes.width, sizes.height);
+  // to smooth out the pixels in the canvas, will set
+  // the renderer to have a pixel ratio between 1 or two
+  // to not overload the device with to many pixels
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const getDeltaTime = timeDelta();
 
@@ -87,4 +122,4 @@ const renderOrbitControls = () => {
   tick();
 };
 
-export { renderOrbitControls };
+export { fullScreenCanvas };
