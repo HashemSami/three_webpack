@@ -5,22 +5,6 @@ import GUI from "lil-gui";
 
 const gui = new GUI();
 
-// native JS way
-const getTexture = () => {
-  const image = new Image();
-
-  // to create a texture from the image
-  const texture = new THREE.Texture(image);
-
-  image.addEventListener("load", () => {
-    texture.needsUpdate = true;
-  });
-
-  image.setAttribute("src", "/textures/door/color.jpg");
-
-  return texture;
-};
-
 // using THREE loader
 const textureLoader = () => {
   // used to manage your loaders to the scene
