@@ -4,8 +4,9 @@ import "./style.css";
 // import { renderOrbitControls } from "./orbitControllers";
 // import { fullScreenCanvas } from "./fullScreenCanvas";
 // import { customGeometry } from "./costomGeometry";
-import { debugTools } from "./debugTools";
+// import { debugTools } from "./debugTools";
 import { textures } from "./textures";
+import { materials } from "./materials";
 
 // renderPrepCamera();
 // renderOrthoCamera();
@@ -13,4 +14,5 @@ import { textures } from "./textures";
 // fullScreenCanvas();
 // customGeometry();
 // debugTools();
-textures();
+// textures();
+materials();

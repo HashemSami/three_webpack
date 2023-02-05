@@ -5,59 +5,25 @@ import GUI from "lil-gui";
 
 const gui = new GUI();
 
-// using THREE loader
-const textureLoader = () => {
-  // used to manage your loaders to the scene
-  const loadingManager = new THREE.LoadingManager();
-  loadingManager.onStart = () => {
-    console.log("onstart");
-  };
-  loadingManager.onLoad = () => {
-    console.log("onLoad");
-  };
-  loadingManager.onProgress = () => {
-    console.log("onProgress");
-  };
-  loadingManager.onError = () => {
-    console.log("onError");
-  };
+const geometries = () => {
+  const material = new THREE.MeshBasicMaterial();
 
-  const textureLoader = new THREE.TextureLoader(loadingManager);
+  material.opacity = 0.5;
+  material.transparent = true;
 
-  const colorTexture = textureLoader.load("/textures/checkerboard-8x8.png");
-  const alphaTexture = textureLoader.load("/textures/door/alpha.jpg");
-  const heightTexture = textureLoader.load("/textures/door/height.jpg");
-  const normalTexture = textureLoader.load("/textures/door/normal.jpg");
-  const ambientOcclusionTexture = textureLoader.load(
-    "/textures/door/ambientOcclusion.jpg"
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    material
   );
-  const metalnessTexture = textureLoader.load("/textures/door/metalness.jpg");
-  const roughnessTexture = textureLoader.load("/textures/door/roughness.jpg");
 
-  // colorTexture.repeat.setX(2);
-  // colorTexture.repeat.setY(3);
-  // colorTexture.wrapS = THREE.MirroredRepeatWrapping;
-  // colorTexture.wrapT = THREE.MirroredRepeatWrapping;
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
 
-  // colorTexture.offset.setX(0.5);
-  // colorTexture.offset.setY(0.5);
+  const torus = new THREE.Mesh(
+    new THREE.TorusGeometry(0.3, 0.2, 16, 32),
+    material
+  );
 
-  // rotate 45 deg
-  // by default the rotation wil bee done from the 0 origin, form th corner of the cube
-  // colorTexture.rotation = Math.PI / 4;
-
-  // we have to chang eht origin of retation be specifying the center value
-  // colorTexture.center.set(0.5, 0.5);
-
-  // using the nearest filter will give us a better performance
-  // and a better visuals, as it filters out th image in one verion
-  // and we will not need the mipmapping where we creates a lot of versions of the texture
-  // to match the zoom on the texture
-  colorTexture.generateMipmaps = false;
-  colorTexture.minFilter = THREE.NearestFilter;
-  colorTexture.magFilter = THREE.NearestFilter;
-
-  return colorTexture;
+  return [sphere, plane, torus];
 };
 
 const spinFunction = () => {
@@ -68,9 +34,7 @@ const parameters = {
   spin: spinFunction,
 };
 
-const textures = () => {
-  const colorTexture = textureLoader();
-
+const materials = () => {
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
@@ -80,24 +44,21 @@ const textures = () => {
   /**
    * Objects
    */
-  const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
 
-  const material = new THREE.MeshBasicMaterial({
-    map: colorTexture,
-  });
+  const [sphere, plane, torus] = geometries();
 
-  const mesh = new THREE.Mesh(geometry, material);
-  // mesh.position.set(1, 1, 1);
-  // mesh.scale.set(2, 0.5, 0.5);
-  scene.add(mesh);
-  mesh.rotation.reorder("YXZ");
+  sphere.position.setX(-2);
+  torus.position.setX(2);
+
+  scene.add(sphere, plane, torus);
+  sphere.rotation.reorder("YXZ");
 
   // Debug
-  gui.add(mesh.position, "y", -3, 3, 0.01).name("elevation");
+  gui.add(sphere.position, "y", -3, 3, 0.01).name("elevation");
 
-  gui.add(mesh, "visible");
-  gui.add(material, "wireframe");
-  gui.addColor(material, "color");
+  gui.add(sphere, "visible");
+  gui.add(sphere, "wireframe");
+  // gui.addColor(material, "color");
 
   gui.add(parameters, "spin");
 
@@ -139,7 +100,7 @@ const textures = () => {
   controls.enableDamping = true;
 
   // distance method the length between the object and the camera
-  console.log(mesh.position.distanceTo(camera.position));
+  // console.log(mesh.position.distanceTo(camera.position));
 
   // axis helpers
   const axisHelper = new THREE.AxesHelper();
@@ -165,8 +126,15 @@ const textures = () => {
 
     controls.update();
 
-    camera.lookAt(mesh.position);
+    // camera.lookAt(torus.position);
 
+    sphere.rotation.x = 0.1 * elapsedTime;
+    plane.rotation.x = 0.1 * elapsedTime;
+    torus.rotation.x = 0.1 * elapsedTime;
+
+    sphere.rotation.y = 0.2 * elapsedTime;
+    plane.rotation.y = 0.2 * elapsedTime;
+    torus.rotation.y = 0.2 * elapsedTime;
     renderer.render(scene, camera);
 
     window.requestAnimationFrame(tick);
@@ -174,4 +142,4 @@ const textures = () => {
   tick();
 };
 
-export { textures };
+export { materials };
