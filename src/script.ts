@@ -5,8 +5,9 @@ import "./style.css";
 // import { fullScreenCanvas } from "./fullScreenCanvas";
 // import { customGeometry } from "./costomGeometry";
 // import { debugTools } from "./debugTools";
-import { textures } from "./textures";
-import { materials } from "./materials";
+// import { textures } from "./textures";
+// import { materials } from "./materials";
+import { fontGeometry } from "./fontGeometry";
 
 // renderPrepCamera();
 // renderOrthoCamera();
@@ -15,4 +16,5 @@ import { materials } from "./materials";
 // customGeometry();
 // debugTools();
 // textures();
-materials();
+// materials();
+fontGeometry();
