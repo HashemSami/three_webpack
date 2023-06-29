@@ -11,8 +11,8 @@ const loadTextToScene = (scene: THREE.Scene) => {
   // doesn't return a value, insteade we need to handle the callback
   // from the loader
   const fontLoader = new FontLoader();
-  fontLoader.load("fonts/helvetiker_regular.typeface.json", (font) => {
-    const textGeometry = new TextGeometry("Hashem Sami", {
+  fontLoader.load("fonts/helvetiker_regular.typeface.json", font => {
+    const textGeometry = new TextGeometry("Talah Dimah Hashem Sarah ", {
       font: font,
       size: 0.5,
       height: 0.2,
