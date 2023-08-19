@@ -1,37 +1,61 @@
-import * as THREE from "three";
+import { Camera, PerspectiveCamera, MeshBasicMaterial, Mesh } from "three";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
+import GUI from "lil-gui";
 
-type ThreeScene = {
-  readonly scene: THREE.Scene;
+interface GUIoptions {
+  property: string;
+  $1?: number | object | any[] | undefined;
+  max?: number | undefined;
+  step?: number | undefined;
+}
+const gui = new GUI();
+
+type SceneServices = {
+  loadTextToScene: (text: string) => { addGui: (o: GUIoptions) => void };
 };
 
-type SceneServices = {};
+const loadText = (scene: THREE.Scene, text: string) => {
+  // doesn't return a value, insteade we need to handle the callback
+  // from the loader
+  return new Promise(resolve, reject)=>{
 
-// function createScene():ThreeScene{
-//   return {
-//     scene:
-//   }
-// }
+    const fontLoader = new FontLoader();
+    let textMesh: THREE.Mesh;
+    fontLoader.load("fonts/helvetiker_regular.typeface.json", font => {
+      const textGeometry = new TextGeometry(text, {
+        font: font,
+        size: 0.5,
+        height: 0.2,
+        curveSegments: 5,
+        bevelEnabled: true,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 4,
+      });
 
-// function Products(name: string, price: number) {
-//   this.name = name;
-//   this.price = price;
-// }
+      const material = new MeshBasicMaterial({ wireframe: true });
+      textMesh = new Mesh(textGeometry, material);
+      textMesh.rotation.reorder("YXZ");
 
-// Product.prototype.getName = function () {
-//   return this.name;
-// };
-
-class Product {
-  name: string;
-  price: number;
-  constructor(name: string, price: number) {
-    this.name = name;
-    this.price = price;
+      scene.add(textMesh);
+    });
+    resolve( {
+      addGui: (o: GUIoptions) => addGui(textMesh, o),
+    });
   }
+};
 
-  getName(): string {
-    return this.name;
-  }
-}
+const addGui = (object: object, o: GUIoptions) => {
+  const { property, $1, max, step } = o;
+  gui.add(object, property, $1, max, step);
+};
 
-const espresso = new Product("Espresso", 399);
+const sceneServices = (scene: THREE.Scene): SceneServices => {
+  return {
+    loadTextToScene: (text: string) => loadText(scene, text),
+  };
+};
+
+export { sceneServices };

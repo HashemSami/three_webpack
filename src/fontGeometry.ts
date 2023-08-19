@@ -4,39 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import GUI from "lil-gui";
-
-const gui = new GUI();
-
-const loadTextToScene = (scene: THREE.Scene) => {
-  // doesn't return a value, insteade we need to handle the callback
-  // from the loader
-  const fontLoader = new FontLoader();
-  fontLoader.load("fonts/helvetiker_regular.typeface.json", font => {
-    const textGeometry = new TextGeometry("Talah Dimah Hashem Sarah ", {
-      font: font,
-      size: 0.5,
-      height: 0.2,
-      curveSegments: 5,
-      bevelEnabled: true,
-      bevelThickness: 0.03,
-      bevelSize: 0.02,
-      bevelOffset: 0,
-      bevelSegments: 4,
-    });
-
-    const material = new THREE.MeshBasicMaterial({ wireframe: true });
-    const text = new THREE.Mesh(textGeometry, material);
-    text.rotation.reorder("YXZ");
-
-    // Debug
-    gui.add(text.position, "y", -3, 3, 0.01).name("elevation");
-
-    gui.add(text, "visible");
-    gui.add(text, "wireframe");
-
-    scene.add(text);
-  });
-};
+import { sceneServices } from "./threeSetup";
 
 const geometries = () => {
   // roughnedd and metalness
@@ -53,12 +21,17 @@ const fontGeometry = () => {
 
   // Scene
   const scene = new THREE.Scene();
+  const sceneTools = sceneServices(scene);
+  sceneTools.loadTextToScene("Hashem").addGui({ property: "visible" });
 
+  // // Debug
+  // gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
+
+  // gui.add(textMesh, "visible");
+  // gui.add(textMesh, "wireframe");
   /**
    * Objects
    */
-
-  loadTextToScene(scene);
 
   // gui.addColor(material, "color");
 
