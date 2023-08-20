@@ -1,10 +1,13 @@
 import "./style.css";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import GUI from "lil-gui";
-import { sceneServices } from "./threeSetup";
+import {
+  sceneServices,
+  controlServices,
+  rendererServices,
+  // cameraServices,
+} from "./threeSetup";
+const gui = new GUI();
 
 const geometries = () => {
   // roughnedd and metalness
@@ -18,17 +21,19 @@ const geometries = () => {
 const fontGeometry = () => {
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
-
-  // Scene
   const scene = new THREE.Scene();
+
+  // tools
+  const rendererTools = rendererServices(canvas);
   const sceneTools = sceneServices(scene);
-  sceneTools.loadTextToScene("Hashem").addGui({ property: "visible" });
+  const controlTools = controlServices();
+  // const cameraTools = cameraServices();
 
-  // // Debug
-  // gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
+  /**
+   * Renderer
+   */
+  const renderer = rendererTools.newRenderer();
 
-  // gui.add(textMesh, "visible");
-  // gui.add(textMesh, "wireframe");
   /**
    * Objects
    */
@@ -43,22 +48,6 @@ const fontGeometry = () => {
     height: window.innerHeight,
   };
 
-  window.addEventListener("resize", () => {
-    // update sizes
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
-
-    // update camera
-    camera.aspect = sizes.width / sizes.height;
-    camera.updateProjectionMatrix();
-
-    // update renderer
-    renderer.setSize(sizes.width, sizes.height);
-    // if the window changed to another screen
-    // we will still have the same ratio
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  });
-
   /**
    * lights
    */
@@ -72,29 +61,25 @@ const fontGeometry = () => {
   // camera.lookAt(new THREE.Vector3(2, 2, 2));
   // scene.add(camera);
 
-  const controls = new OrbitControls(camera, canvas);
-  // controls.enabled = false;
-  controls.enableDamping = true;
-  controls.target = new THREE.Vector3(1, 0, 0);
+  /**
+   * controls
+   */
+  const controls = controlTools.addOrbitControls(camera, canvas);
+  controlTools.handleResize(camera, renderer);
 
   // distance method the length between the object and the camera
   // console.log(mesh.position.distanceTo(camera.position));
 
-  // axis helpers
-  const axisHelper = new THREE.AxesHelper();
-  scene.add(axisHelper);
+  sceneTools.loadTextToScene("Hashem Sami", textMesh => {
+    textMesh.rotateX(20);
+    // Debug
+    gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
 
-  /**
-   * Renderer
-   */
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
+    gui.add(textMesh, "visible");
+    gui.add(textMesh, "wireframe");
   });
-  renderer.setSize(sizes.width, sizes.height);
-  // to smooth out the pixels in the canvas, will set
-  // the renderer to have a pixel ratio between 1 or two
-  // to not overload the device with to many pixels
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  sceneTools.addAxisToScene();
 
   // fixing time frame with THREE.clock
   const clock = new THREE.Clock();
