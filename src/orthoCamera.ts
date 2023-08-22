@@ -98,15 +98,15 @@ const renderOrthoCamera = () => {
   const clock = new THREE.Clock();
 
   const cursorPoints = addMouseControls();
-
+  const p = new THREE.Vector3(0, 0, 0);
   const tick = () => {
     const elapsedTime = clock.getElapsedTime();
 
-    camera.position.x = Math.sin(cursorPoints.x * Math.PI) * 3;
-    camera.position.z = Math.cos(cursorPoints.x * Math.PI) * 3;
-    camera.position.y = cursorPoints.y * 3;
+    // camera.position.x = Math.sin(cursorPoints.x * Math.PI) * 3;
+    // camera.position.z = Math.cos(cursorPoints.x * Math.PI) * 3;
+    // camera.position.y = cursorPoints.y * 3;
 
-    camera.lookAt(mesh.position);
+    // camera.lookAt(p);
 
     renderer.render(scene, camera);
 

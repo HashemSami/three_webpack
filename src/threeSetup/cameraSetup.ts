@@ -1,16 +1,42 @@
-import { PerspectiveCamera } from "three";
+import { PerspectiveCamera, OrthographicCamera } from "three";
 
 type CameraServices = {
-  getPerspectiveCamera: (options: PerspectiveCamera) => PerspectiveCamera;
+  getPerspectiveCamera: (
+    ...args: ConstructorParameters<typeof PerspectiveCamera>
+  ) => THREE.PerspectiveCamera;
+  getOrthographicCamera: (
+    ...args: ConstructorParameters<typeof OrthographicCamera>
+  ) => THREE.OrthographicCamera;
 };
 
-interface Prespect extends THREE.PerspectiveCamera {}
+const getPerspectiveCamera = (
+  ...args: ConstructorParameters<typeof PerspectiveCamera>
+): THREE.PerspectiveCamera => {
+  // const { fov, aspect } = p;
+  const camera = new PerspectiveCamera(...args);
+  camera.position.z = 8;
+  // camera.position.x = 0.5;
+  return camera;
+};
 
-const getPerspectiveCamera = (p: PerspectiveCamera): PerspectiveCamera => {
-  const { fov, aspect } = p;
-  const camera = new PerspectiveCamera(fov, aspect);
-  camera.position.z = 0.5;
-  camera.position.x = 0.5;
+const getOrthographicCamera = (
+  ...args: ConstructorParameters<typeof PerspectiveCamera>
+): THREE.OrthographicCamera => {
+  const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+  const aspectRatio = sizes.width / sizes.height;
+
+  const camera = new OrthographicCamera(
+    -2 * aspectRatio, // left distance
+    2 * aspectRatio, // right distance
+    2, // above distance
+    -2, // below distance
+    0.1, //nearest view
+    100 // farthest view
+  );
+  camera.position.z = 3;
   return camera;
 };
 
@@ -20,8 +46,8 @@ const cameraServices = (): CameraServices => {
     height: window.innerHeight,
   };
   return {
-    getPerspectiveCamera: (options: PerspectiveCamera) =>
-      getPerspectiveCamera(options),
+    getPerspectiveCamera,
+    getOrthographicCamera,
   };
 };
 

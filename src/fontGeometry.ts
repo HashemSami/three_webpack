@@ -1,22 +1,14 @@
 import "./style.css";
 import * as THREE from "three";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import GUI from "lil-gui";
 import {
   sceneServices,
   controlServices,
   rendererServices,
-  // cameraServices,
+  cameraServices,
 } from "./threeSetup";
 const gui = new GUI();
-
-const geometries = () => {
-  // roughnedd and metalness
-  const material = new THREE.MeshBasicMaterial({ color: "white" });
-
-  const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
-
-  return [box];
-};
 
 const fontGeometry = () => {
   // Canvas
@@ -27,18 +19,12 @@ const fontGeometry = () => {
   const rendererTools = rendererServices(canvas);
   const sceneTools = sceneServices(scene);
   const controlTools = controlServices();
-  // const cameraTools = cameraServices();
+  const cameraTools = cameraServices();
 
   /**
    * Renderer
    */
   const renderer = rendererTools.newRenderer();
-
-  /**
-   * Objects
-   */
-
-  // gui.addColor(material, "color");
 
   /**
    * Sizes
@@ -55,9 +41,11 @@ const fontGeometry = () => {
   /**
    * Camera
    */
-  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-  camera.position.z = 0.5;
-  camera.position.x = 0.5;
+  const camera = cameraTools.getOrthographicCamera();
+  // camera.position.z = 3;
+  // const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+  // camera.position.z = 0.5;
+  // camera.position.x = 0.5;
   // camera.lookAt(new THREE.Vector3(2, 2, 2));
   // scene.add(camera);
 
@@ -66,17 +54,23 @@ const fontGeometry = () => {
    */
   const controls = controlTools.addOrbitControls(camera, canvas);
   controlTools.handleResize(camera, renderer);
+  /**
+   * Objects
+   */
+
+  // gui.addColor(material, "color");
 
   // distance method the length between the object and the camera
   // console.log(mesh.position.distanceTo(camera.position));
-
-  sceneTools.loadTextToScene("Hashem Sami", textMesh => {
-    textMesh.rotateX(20);
+  let mesh: THREE.Mesh<TextGeometry, THREE.MeshBasicMaterial>;
+  sceneTools.loaders().loadTextToScene("Hashem Sami", textMesh => {
+    // textMesh.rotateX(20);
     // Debug
+    mesh = textMesh;
     gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
 
     gui.add(textMesh, "visible");
-    gui.add(textMesh, "wireframe");
+    // gui.add(textMesh, "wireframe");
   });
 
   sceneTools.addAxisToScene();
@@ -84,10 +78,19 @@ const fontGeometry = () => {
   // fixing time frame with THREE.clock
   const clock = new THREE.Clock();
 
+  // const cursorPoints = controlTools.getMouseCoordinates();
+  const p = new THREE.Vector3(0, 0, 0);
+
   const tick = () => {
     const elapsedTime = clock.getElapsedTime();
 
     controls.update();
+
+    // camera.position.x = Math.sin(cursorPoints.x * Math.PI) * 3;
+    // camera.position.z = Math.cos(cursorPoints.x * Math.PI) * 3;
+    // camera.position.y = cursorPoints.y * 3;
+
+    // camera.lookAt(p);
 
     // camera.lookAt(torus.position);
 
