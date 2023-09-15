@@ -1,4 +1,4 @@
-import { MeshBasicMaterial, Mesh, AxesHelper } from "three";
+import { AxesHelper } from "three";
 import { loaders, Loaders } from "./loaders";
 type SceneServices = {
   loaders: () => Loaders;
