@@ -51,7 +51,7 @@ UserFunc.prototype.showStrength = function () {
 };
 
 const individuals = [];
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 10; i++) {
   const person = new UserFunc({
     firstName: "Zaynab",
     lastName: "Olagunju",
@@ -65,7 +65,9 @@ for (let key in used) {
   console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
 }
 const start = Date.now();
-individuals.map(person => person.showStrength());
+individuals.map(person => {
+  console.log(person.showStrength());
+});
 console.log(
   "Finished displaying strength in " + (Date.now() - start) / 1000 + " seconds"
 );

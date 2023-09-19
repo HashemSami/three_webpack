@@ -1,9 +1,7 @@
-import time
 from timeit import default_timer as timer
 
 
 class User:
-
     def __init__(self, first_name, last_name, age, occupation):
         self.first_name = first_name
         self.last_name = last_name
@@ -15,7 +13,7 @@ class User:
 
     def show_strength(self):
         how_old = self.age
-        output = 'I am '
+        output = "I am "
         while how_old > 0:
             output += "very "
             how_old -= 1
@@ -25,7 +23,7 @@ class User:
 
 individuals = []
 for i in range(10000):
-    person = User('Zay', 'olag', i, "Economist")
+    person = User("Zay", "olag", i, "Economist")
     individuals.append(person)
 
 # start_time = time.time()

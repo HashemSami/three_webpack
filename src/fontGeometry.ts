@@ -10,21 +10,43 @@ import {
 } from "./threeSetup";
 const gui = new GUI();
 
+interface User {
+  firstName: string;
+  age: number;
+}
+
 const fontGeometry = () => {
+  const userState: User = {
+    firstName: "",
+    age: 0,
+  };
+
+  const useState = (
+    state: User
+  ): [state: User, setState: (newState: Partial<User>) => void] => {
+    const setState = (newState: Partial<User>) => {
+      Object.assign(state, newState);
+    };
+    return [state, setState];
+  };
+
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
   const scene = new THREE.Scene();
+  const newRenderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+  });
 
   // tools
-  const rendererTools = rendererServices(canvas);
-  const sceneTools = sceneServices(scene);
+  const rendererTools = rendererServices();
+  const sceneTools = sceneServices();
   const controlTools = controlServices();
   const cameraTools = cameraServices();
 
   /**
    * Renderer
    */
-  const renderer = rendererTools.newRenderer();
+  const renderer = rendererTools.setRenderer(newRenderer);
 
   /**
    * Sizes
@@ -62,18 +84,41 @@ const fontGeometry = () => {
 
   // distance method the length between the object and the camera
   // console.log(mesh.position.distanceTo(camera.position));
-  let mesh: THREE.Mesh<TextGeometry, THREE.MeshBasicMaterial>;
-  sceneTools.loaders().loadTextToScene("Hashem Sami", textMesh => {
-    // textMesh.rotateX(20);
-    // Debug
-    mesh = textMesh;
-    gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
+  const handelText = () => {
+    const [state1, setState] = useState(userState);
 
-    gui.add(textMesh, "visible");
-    // gui.add(textMesh, "wireframe");
+    sceneTools.loaders(scene).loadTextToScene(userState.firstName, textMesh => {
+      // textMesh.rotateX(20);
+      // Debug
+      gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
+
+      gui.add(textMesh, "visible");
+      // gui.add(textMesh, "wireframe");
+    });
+  };
+  handelText();
+
+  const but = document.getElementById("but");
+  const head = document.getElementById("head");
+  const inp = document.getElementById("in") as HTMLInputElement;
+
+  if (head != null) {
+    head.innerHTML = userState.firstName;
+  }
+  but?.addEventListener("click", e => {
+    e.preventDefault();
+    const val = inp?.value;
+    console.log("clicked: ", val);
+
+    const [state1, setState] = useState(userState);
+    setState({ firstName: val });
+    if (head != null) {
+      head.innerHTML = userState.firstName;
+    }
+    handelText();
   });
 
-  sceneTools.addAxisToScene();
+  sceneTools.addAxisToScene(scene);
 
   // fixing time frame with THREE.clock
   const clock = new THREE.Clock();

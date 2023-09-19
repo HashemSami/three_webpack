@@ -9,8 +9,8 @@ body {
 }
 
 canvas.webgl {
-  position: fixed;
+  /* position: fixed;
   top: 0;
   left: 0;
-  outline: none;
+  outline: none; */
 }

@@ -1,8 +1,8 @@
 import { AxesHelper } from "three";
 import { loaders, Loaders } from "./loaders";
 type SceneServices = {
-  loaders: () => Loaders;
-  addAxisToScene: () => void;
+  loaders: (scene: THREE.Scene) => Loaders;
+  addAxisToScene: (scene: THREE.Scene) => void;
 };
 
 const addAxisToScene = (scene: THREE.Scene) => {
@@ -10,10 +10,10 @@ const addAxisToScene = (scene: THREE.Scene) => {
   scene.add(axisHelper);
 };
 
-const sceneServices = (scene: THREE.Scene): SceneServices => {
+const sceneServices = (): SceneServices => {
   return {
-    loaders: () => loaders(scene),
-    addAxisToScene: () => addAxisToScene(scene),
+    loaders,
+    addAxisToScene,
   };
 };
 

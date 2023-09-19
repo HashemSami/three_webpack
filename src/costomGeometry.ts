@@ -36,7 +36,8 @@ const getComplexGeometry = () => {
 const customGeometry = () => {
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
-
+  var gl = canvas.getContext("webgl2");
+  console.log(gl);
   // Scene
   const scene = new THREE.Scene();
 

@@ -1,10 +1,10 @@
 import { WebGLRenderer } from "three";
 
 type RendererServices = {
-  newRenderer: () => WebGLRenderer;
+  setRenderer: (renderer: WebGLRenderer) => WebGLRenderer;
 };
 
-const createRenderer = (renderer: WebGLRenderer): WebGLRenderer => {
+const setRenderer = (renderer: WebGLRenderer): WebGLRenderer => {
   const sizes = {
     width: window.innerWidth,
     height: window.innerHeight,
@@ -17,13 +17,9 @@ const createRenderer = (renderer: WebGLRenderer): WebGLRenderer => {
   return renderer;
 };
 
-const rendererServices = (canvas: HTMLCanvasElement): RendererServices => {
-  const renderer = new WebGLRenderer({
-    canvas: canvas,
-  });
-
+const rendererServices = (): RendererServices => {
   return {
-    newRenderer: () => createRenderer(renderer),
+    setRenderer,
   };
 };
 
