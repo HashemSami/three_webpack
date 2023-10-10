@@ -1,6 +1,5 @@
 import "./style.css";
 import * as THREE from "three";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import GUI from "lil-gui";
 import {
   sceneServices,
@@ -15,20 +14,24 @@ interface User {
   age: number;
 }
 
+const useState = (
+  state: User
+): [state: User, setState: (newState: Partial<User>) => void] => {
+  const setState = (newState: Partial<User>) => {
+    return () => {
+      state = Object.assign(state, newState);
+    };
+  };
+  return [state, setState];
+};
+
 const fontGeometry = () => {
   const userState: User = {
-    firstName: "",
+    firstName: "hhh",
     age: 0,
   };
 
-  const useState = (
-    state: User
-  ): [state: User, setState: (newState: Partial<User>) => void] => {
-    const setState = (newState: Partial<User>) => {
-      Object.assign(state, newState);
-    };
-    return [state, setState];
-  };
+  const [state1, setState] = useState(userState);
 
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
@@ -85,9 +88,7 @@ const fontGeometry = () => {
   // distance method the length between the object and the camera
   // console.log(mesh.position.distanceTo(camera.position));
   const handelText = () => {
-    const [state1, setState] = useState(userState);
-
-    sceneTools.loaders(scene).loadTextToScene(userState.firstName, textMesh => {
+    sceneTools.loaders(scene).loadTextToScene(state1.firstName, textMesh => {
       // textMesh.rotateX(20);
       // Debug
       gui.add(textMesh.position, "y", -3, 3, 0.01).name("elevation");
@@ -96,21 +97,20 @@ const fontGeometry = () => {
       // gui.add(textMesh, "wireframe");
     });
   };
-  handelText();
+  // handelText();
 
   const but = document.getElementById("but");
   const head = document.getElementById("head");
   const inp = document.getElementById("in") as HTMLInputElement;
 
   if (head != null) {
-    head.innerHTML = userState.firstName;
+    head.innerHTML = state1.firstName;
   }
   but?.addEventListener("click", e => {
     e.preventDefault();
     const val = inp?.value;
     console.log("clicked: ", val);
 
-    const [state1, setState] = useState(userState);
     setState({ firstName: val });
     if (head != null) {
       head.innerHTML = userState.firstName;
